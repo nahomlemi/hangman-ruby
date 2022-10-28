@@ -1,7 +1,7 @@
 
 class Board
   @@incorrect_letter = Array.new
-  @@correct_words = Array.new  
+  @@correct_letter = Array.new  
   
   @@head = " O"
   @@left_hand = "/"
@@ -14,6 +14,7 @@ class Board
  |    |"
 
   def board()
+    puts '############################################################'
     p @@incorrect_letter
     puts @@rope
     if @@incorrect_letter.length == 1 && @@incorrect_letter[0] != nil
@@ -44,7 +45,7 @@ class Board
       print @@left_leg
       puts @@right_leg
     end
-    print @@correct_words 
+    print @@correct_letter
   end
 end
 
@@ -58,10 +59,12 @@ class Computer < Board
       @@words_array.push(word)
     }
     f.close()
-    @@random_word = @@words_array[rand(0..10000)]
+    @@random_word = @@words_array[rand(0..9893)]
     puts @@random_word
-    @@random_word.length.times do 
-      @@correct_words.push("_")
+    puts @@random_word.length
+
+    (@@random_word.length-1).times do 
+      @@correct_letter.push("_")
     end
   end
 end
@@ -70,33 +73,82 @@ class Player < Computer
   @@player_input = ''
   def require_input()
     print "enter your guess: "
-    @@player_input = gets
+    @@player_input = gets.chomp
   end
 end
 
 
 class Game < Player
   def check_input()
-
+  
     if @@random_word.split('').all?{|letter| letter != @@player_input}
-      @@incorrect_letter.push(@@player_input) 
+      @@incorrect_letter.push(@@player_input)
     else
-      @@random_word.split('').each_with_index {|letter, index|
-      @@player_input == letter
-      @@correct_words[index] = @@player_input
-    }
+      @@random_word.split('').each_with_index {|letter,index|
+        if letter == @@player_input
+          if @@correct_letter.include?(letter)
+            @@correct_letter[index] = @@player_input
+          else
+            @@correct_letter[index] = @@player_input
+            break
+          end
+        
+        end
+      }
     end
   end
+
+  def check_winner()
+    @@correct_array = @@correct_letter
+     if (@@correct_array.push("\n")) == @@random_word.split('')
+      puts "\nYOU WON!"
+      exit()
+     else
+      @@correct_array.pop()
+     end
+  end
+  
   def play()
     generate_random_word()
-    while @@incorrect_letter.length != 6
+    while @@incorrect_letter.length <6
       require_input()
+      check_input()
+      board()
+      check_winner()
     end
   end
 end
 
 game = Game.new()
 game.play()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 =begin
